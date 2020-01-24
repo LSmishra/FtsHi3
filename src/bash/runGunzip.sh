@@ -1,10 +1,4 @@
-#!/bin/bash
-
-# for a script 
-# -e means stop on error
-set -e
-
-#for submitting batch scripts
+#!/bin/bash -l
 #SBATCH --job-name=gunzip
 #SBATCH --output=log.txt
 #SBATCH --error=error.txt
@@ -15,6 +9,10 @@ set -e
 #SBATCH -A u2018009
 #SBATCH --mail-user=laxmi.mishra@umu.se
 #SBATCH --mail-type=ALL
+
+# for a script 
+# -e means stop on error
+set -e
 
 # a usage function
 usage(){

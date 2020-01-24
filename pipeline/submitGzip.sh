@@ -8,7 +8,7 @@ in=../data/raw/miseq06012020
 out=../data/gunzip
 
 # create the output directory if it does not exist
-if [ ! -d $ out ]; then
+if [ ! -d $out ]; then
   mkdir -p $out
 fi
 
