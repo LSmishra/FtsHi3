@@ -25,8 +25,8 @@ if [ $# -ne 1 ]; then
   usage
 fi
 
-if [ ! -f $1 ]; then
-  echo "The one argument needs to be a file"
+if [ ! -d $1 ]; then
+  echo "The one argument needs to be a directory"
   usage
 fi
 
@@ -35,8 +35,4 @@ fi
 # $() is to execute the command and capture the output
 # basename is the function that returns the filename without the file path
 # ${//} is a construct to replace (substitute) in ${variable/pattern/replacement}
-merge -c $1 > $2/$(basename ${1/.fastq/})
-
-
-
-perl /filepath/merge_R1R2_for_multiple_fastqs.pl /filepathtofolderwithunzippedR1R2files/
+perl ${SLURM_SUBMIT_DIR:-$(pwd)}/../src/perl/merge_R1R2_for_multiple_fastqs.pl $1 

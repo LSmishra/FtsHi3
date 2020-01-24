@@ -1,29 +1,52 @@
-#!/bin/bash
-
-#for submitting batch scripts
-#SBATCH --job-name=itagger_STRW
-#SBATCH --mem-per-cpu=48GB
-#SBATCH --time=48:00:00
-#SBATCH --output=log.txt
-#SBATCH --error=error.txt
+#!/bin/bash -l
+#SBATCH --job-name=itagger
+#SBATCH --output=itagger_log.txt
+#SBATCH --error=itagger_error.txt
 #SBATCH --partition=core
+#SBATCH -n 1
+#SBATCH -t 2-00:00:00
+#SBATCH --mem=32GB
+#SBATCH -A u2018009
 #SBATCH --mail-user=laxmi.mishra@umu.se
 #SBATCH --mail-type=ALL
 
-source /global/home/users/colemand/.bash_profile 
-#this is used if you have specified a specific scratch space for interediate files
+# for a script 
+# -e means stop on error
+set -e
 
-module load cutadapt/1.7.1
-module load flash/1.2.11
-module load fastx_toolkit/0.0.14-intel
-module load usearch/v7
-module load python/2.7.8
-module load java/1.8.0_05
+# variables
+bind="/mnt:/mnt"
+image=/mnt/picea/projects/singularity/itagger.simg
 
-/global/home/users/colemand/ActivePerl-5.18/bin/perl /global/home/users/colemand/jgi_itagger/bin/itagger.pl \
---config /clusterfs/vector/scratch/colemand/itags/VESTA_Strawberry/VESTA_Final/config_16S_template.ini \
---lib /clusterfs/vector/scratch/colemand/itags/VESTA_Strawberry/VESTA_Final/VESTA_Final_itagger_files.txt \
---dir /clusterfs/vector/scratch/colemand/itags/VESTA_Strawberry/VESTA_Final/itagger_output/
+# a usage function
+usage(){
+  echo "Synopsis: runitagger.sh <config file> <lib file> <out directory>"
+  exit 1
+}
 
-#Run itagger using sbatch:
- sbatch itagger_submit_template.sh
+if [ $# -ne 3 ]; then
+  echo "The script expects one arguments"
+  usage
+fi
+
+if [ ! -f $1 ]; then
+  echo "The first argument needs to be a file"
+  usage
+fi
+
+if [ ! -f $2 ]; then
+  echo "The second argument needs to be a file"
+  usage
+fi
+
+if [ ! -d $3 ]; then
+  echo "The third argument needs to be a directory"
+  usage
+fi
+
+# $() is to execute the command and capture the output
+# basename is the function that returns the filename without the file path
+# ${//} is a construct to replace (substitute) in ${variable/pattern/replacement}
+# \ is an escape character the commandline goes on the next line. Make sure that it is the last character on the line
+singularity -exec --bind $bind $image itagger.pl \
+--config $1 --lib $2 --dir $3

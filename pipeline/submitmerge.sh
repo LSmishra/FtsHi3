@@ -12,11 +12,11 @@ if [ ! -d $out ]; then
   mkdir -p $out
 fi
 
-# list the files
-for f in $(find $in -name "*.fastq") ; do
-  fnam=$(basename ${f/.fastq/})
-  sbatch -o $out/$fnam.out -e $out/$fnam.err -J fastq-$fnam ../src/bash/runmerge.sh $f $out
-done
+# create links in the output directory
+find $(realpath $in) -name "*.fastq" -exec ln -sf -t $out "{}" \;
+
+# run the script in the out directory
+sbatch ../src/bash/runmerge.sh $out
 
 # a note on variables
 # I can write $fnam.err it will be replaced by the value of $fnam followed by the string ".err"
@@ -24,3 +24,4 @@ done
 # To actually print $fnam followed by "_err", I need to ${fnam}_err
 # . (dot) is a special case, using ${fnam} is safer
 # Using ${} is also not needed if the variable is the last element in a concatenation; i.e. gz-$fnam
+#cancel job that you dont need scancel u lmishra##
