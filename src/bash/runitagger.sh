@@ -48,5 +48,5 @@ fi
 # basename is the function that returns the filename without the file path
 # ${//} is a construct to replace (substitute) in ${variable/pattern/replacement}
 # \ is an escape character the commandline goes on the next line. Make sure that it is the last character on the line
-singularity -exec --bind $bind $image itagger.pl \
---config $1 --lib $2 --dir $3
+singularity exec --bind $bind $image itagger.pl \
+--config $1 --in $2 --out $3

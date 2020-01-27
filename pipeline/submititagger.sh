@@ -20,7 +20,7 @@ xargs -I {} bash -c 'echo $(basename ${0/.fastq/}) $(realpath $0)' {} | \
 sed -e 's/ /\t/' > $lib
 
 # list the files
-sbatch ../src/bash/runitagger.sh $cfg $lib $out
+echo sbatch ../src/bash/runitagger.sh $cfg $lib $out
 
 # a note on variables
 # I can write $fnam.err it will be replaced by the value of $fnam followed by the string ".err"
